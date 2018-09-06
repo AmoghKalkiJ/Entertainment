@@ -13,8 +13,8 @@ func main() {
 	r := mux.NewRouter()
 	fmt.Println("Hello")
 	r.HandleFunc("/novels", NovelsHandler).Methods("POST")
-	fmt.Println("Started server on localhost:8089")
-	if err := http.ListenAndServe(":8089", r); err != nil {
+	fmt.Println("Started server on localhost:8080")
+	if err := http.ListenAndServe(":8080", r); err != nil {
 		panic(err)
 	}
 }
@@ -25,6 +25,7 @@ func NovelsHandler(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		fmt.Println("Got some error in reading request body", err)
 	}
+	fmt.Println("Got body:",string(body))
 	err = json.Unmarshal(body, &dialogflowreq)
 	if err != nil {
 		fmt.Println("Got some error in unmarshalling request body", err)
