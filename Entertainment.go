@@ -37,9 +37,8 @@ func NovelsHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	response := types.DialogFlowResponse{
-		Speech:      "Hi you are searching for " + author,
-		DisplayText: "Hi you are searching for " + author,
-		Source:      "Webhook",
+		FulfillmentText:      "Hi you are searching for " + author,
+		Source:      "Entertainment app",
 	}
 
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
