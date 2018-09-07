@@ -1,5 +1,7 @@
 package types
 
+import "time"
+
 type DialogFlowRequest struct {
 	ResponseID  string `json:"responseId"`
 	QueryResult struct {
@@ -28,64 +30,58 @@ type DialogFlowResponse struct {
 	FulfillmentText     string `json:"fulfillmentText"`
 	FulfillmentMessages []struct {
 		Card struct {
-			     Title    string `json:"title"`
-			     Subtitle string `json:"subtitle"`
-			     ImageURI string `json:"imageUri"`
-			     Buttons  []struct {
-				     Text     string `json:"text"`
-				     Postback string `json:"postback"`
-			     } `json:"buttons"`
-		     } `json:"card"`
+			Title    string `json:"title"`
+			Subtitle string `json:"subtitle"`
+			ImageURI string `json:"imageUri"`
+			Buttons  []struct {
+				Text     string `json:"text"`
+				Postback string `json:"postback"`
+			} `json:"buttons"`
+		} `json:"card"`
 	} `json:"fulfillmentMessages"`
 	Source  string `json:"source"`
 	Payload struct {
-				    Google struct {
-						   ExpectUserResponse bool `json:"expectUserResponse"`
-						   RichResponse       struct {
-									      Items []struct {
-										      SimpleResponse struct {
-													     TextToSpeech string `json:"textToSpeech"`
-												     } `json:"simpleResponse"`
-									      } `json:"items"`
-								      } `json:"richResponse"`
-					   } `json:"google"`
-				    Facebook struct {
-						   Text string `json:"text"`
-					   } `json:"facebook"`
-				    Slack struct {
-						   Text string `json:"text"`
-					   } `json:"slack"`
-			    } `json:"payload"`
+		Google struct {
+			ExpectUserResponse bool `json:"expectUserResponse"`
+			RichResponse       struct {
+				Items []struct {
+					SimpleResponse struct {
+						TextToSpeech string `json:"textToSpeech"`
+					} `json:"simpleResponse"`
+				} `json:"items"`
+			} `json:"richResponse"`
+		} `json:"google"`
+		Facebook struct {
+			Text string `json:"text"`
+		} `json:"facebook"`
+		Slack struct {
+			Text string `json:"text"`
+		} `json:"slack"`
+	} `json:"payload"`
 	OutputContexts []struct {
 		Name          string `json:"name"`
 		LifespanCount int    `json:"lifespanCount"`
 		Parameters    struct {
-				      Param string `json:"param"`
-			      } `json:"parameters"`
+			Param string `json:"param"`
+		} `json:"parameters"`
 	} `json:"outputContexts"`
 	FollowupEventInput struct {
-				    Name         string `json:"name"`
-				    LanguageCode string `json:"languageCode"`
-				    Parameters   struct {
-							 Param string `json:"param"`
-						 } `json:"parameters"`
-			    } `json:"followupEventInput"`
+		Name         string `json:"name"`
+		LanguageCode string `json:"languageCode"`
+		Parameters   struct {
+			Param string `json:"param"`
+		} `json:"parameters"`
+	} `json:"followupEventInput"`
 }
 
-
-
-
-
 type Movies struct {
-	Page         int `json:"page"`
-	TotalResults int `json:"total_results"`
-	TotalPages   int `json:"total_pages"`
+	Page         int           `json:"page"`
+	TotalResults int           `json:"total_results"`
+	TotalPages   int           `json:"total_pages"`
 	Results      []MovieResult `json:"results"`
 }
 
-
-
-type MovieResult struct{
+type MovieResult struct {
 	VoteCount        int     `json:"vote_count"`
 	ID               int     `json:"id"`
 	Video            bool    `json:"video"`
@@ -102,7 +98,6 @@ type MovieResult struct{
 	ReleaseDate      string  `json:"release_date"`
 }
 
-
 type MongoDBResponse struct {
 	ID         int    `json:"id" bson:"id"`
 	Title      string `json:"title" bson:"title"`
@@ -115,14 +110,56 @@ type MongoDBResponse struct {
 }
 
 type LibraryRequest struct {
-	OriginalQuery string `json:"originalQuery"`
-	Action        string `json:"action"`
-	Intent        string `json:"intent"`
+	OriginalQuery string            `json:"originalQuery"`
+	Action        string            `json:"action"`
+	Intent        string            `json:"intent"`
 	Entities      map[string]string `json:"entities"`
 	Response      struct {
-			      Text   string `json:"text"`
-			      Speech string `json:"speech"`
-		      } `json:"response"`
+		Text   string `json:"text"`
+		Speech string `json:"speech"`
+	} `json:"response"`
 	IsResolved bool   `json:"isResolved"`
 	SessionID  string `json:"sessionId"`
+}
+
+type MatchList struct {
+	Matches []Match `json:"matches"`
+}
+
+type Match struct {
+	UniqueID       int       `json:"unique_id"`
+	Team2          string    `json:"team-2"`
+	Team1          string    `json:"team-1"`
+	Type           string    `json:"type"`
+	Date           time.Time `json:"date"`
+	DateTimeGMT    time.Time `json:"dateTimeGMT"`
+	Squad          bool      `json:"squad"`
+	TossWinnerTeam string    `json:"toss_winner_team,omitempty"`
+	WinnerTeam     string    `json:"winner_team,omitempty"`
+	MatchStarted   bool      `json:"matchStarted"`
+	V              string    `json:"v"`
+	TTL            int       `json:"ttl"`
+	Provider       struct {
+		Source  string    `json:"source"`
+		URL     string    `json:"url"`
+		PubDate time.Time `json:"pubDate"`
+	} `json:"provider"`
+	CreditsLeft int `json:"creditsLeft"`
+}
+
+type Score struct {
+	Stat         string `json:"stat"`
+	Score        string `json:"score"`
+	Description  string `json:"description"`
+	MatchStarted bool   `json:"matchStarted"`
+	Team1        string `json:"team-1"`
+	Team2        string `json:"team-2"`
+	V            string `json:"v"`
+	TTL          int    `json:"ttl"`
+	Provider     struct {
+		Source  string    `json:"source"`
+		URL     string    `json:"url"`
+		PubDate time.Time `json:"pubDate"`
+	} `json:"provider"`
+	CreditsLeft int `json:"creditsLeft"`
 }
