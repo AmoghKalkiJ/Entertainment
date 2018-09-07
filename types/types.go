@@ -113,3 +113,16 @@ type MongoDBResponse struct {
 	Year       string `json:"year" bson:"year"`
 	URL        string `json:"url" bson:"url"`
 }
+
+type LibraryRequest struct {
+	OriginalQuery string `json:"originalQuery"`
+	Action        string `json:"action"`
+	Intent        string `json:"intent"`
+	Entities      map[string]string `json:"entities"`
+	Response      struct {
+			      Text   string `json:"text"`
+			      Speech string `json:"speech"`
+		      } `json:"response"`
+	IsResolved bool   `json:"isResolved"`
+	SessionID  string `json:"sessionId"`
+}

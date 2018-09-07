@@ -15,9 +15,9 @@ import (
 
 const(
 	mongoURL="ds135852.mlab.com:35852"
-		database = "cxcv"
-username= "govind"
-password= "govind123"
+	database = "cxcv"
+        username= "govind"
+	password= "govind123"
 )
 
 func main() {
@@ -25,7 +25,7 @@ func main() {
 	fmt.Println("Hello")
 	r.HandleFunc("/novels", NovelsHandler).Methods("POST")
 	r.HandleFunc("/movies", MoviessHandler).Methods("POST")
-	//r.HandleFunc("/authorlist", AuthorListHandler).Methods("GET")
+	r.HandleFunc("/authorlist", AuthorListHandler).Methods("POST")
 	fmt.Println("Started server on localhost:8080")
 	if err := http.ListenAndServe(":8080", r); err != nil {
 		panic(err)
@@ -33,7 +33,7 @@ func main() {
 }
 
 func NovelsHandler(w http.ResponseWriter, r *http.Request) {
-	dialogflowreq := types.DialogFlowRequest{}
+	dialogflowreq := types.LibraryRequest{}
 	body, err := ioutil.ReadAll(r.Body)
 	if err != nil {
 		fmt.Println("Got some error in reading request body", err)
@@ -44,27 +44,49 @@ func NovelsHandler(w http.ResponseWriter, r *http.Request) {
 		fmt.Println("Got some error in unmarshalling request body", err)
 	}
 
-	mongoresponse:=GetNovelFromMongo(r,dialogflowreq)
+	mongoresponse:=GetNovelFromMongo(dialogflowreq)
         fmt.Printf("Got mongo response : %+v\n ",mongoresponse)
 	//author := "Agatha Cristie"
 	/*if dialogflowreq.QueryResult.Parameters.Author != "" {
 		author = dialogflowreq.QueryResult.Parameters.Author
 	}*/
-
-	/*response := types.DialogFlowResponse{
-		FulfillmentText:  "Hi you are searching for " + author,
+        data,err:= json.Marshal(mongoresponse)
+	if err != nil {
+		fmt.Println("Got some error in data marshalling body", err)
+	}
+	response := types.DialogFlowResponse{
+		FulfillmentText: string(data) ,
 		Source:      "Entertainment app",
-	}*/
+	}
 
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-	outResponse, _ := json.Marshal(mongoresponse)
+	outResponse, _ := json.Marshal(response)
 	w.WriteHeader(http.StatusOK)
 	w.Write(outResponse)
 
 }
 
-func GetNovelFromMongo(r *http.Request, userrequest types.DialogFlowRequest)types.MongoDBResponse{
-	//var sessionMongo *mgo.Session
+func AuthorListHandler(w http.ResponseWriter, r *http.Request){
+	dialogflowreq := types.DialogFlowRequest{}
+	body, err := ioutil.ReadAll(r.Body)
+	if err != nil {
+		fmt.Println("Got some error in reading request body", err)
+	}
+	fmt.Println("Got body in authorslist:",string(body))
+	err = json.Unmarshal(body, &dialogflowreq)
+	if err != nil {
+		fmt.Println("Got some error in unmarshalling request body", err)
+	}
+
+	mongoresponse:=GetAuthorsListFromMongo(dialogflowreq)
+	fmt.Printf("Got mongo response : %+v\n ",mongoresponse)
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	outResponse, _ := json.Marshal(mongoresponse)
+	w.WriteHeader(http.StatusOK)
+	w.Write(outResponse)
+}
+
+func GetAuthorsListFromMongo( userrequest types.DialogFlowRequest)[]string{
 	mongoDBDialInfo := &mgo.DialInfo{
 		Addrs:    []string{mongoURL},
 		Timeout:  60 * time.Second,
@@ -81,15 +103,49 @@ func GetNovelFromMongo(r *http.Request, userrequest types.DialogFlowRequest)type
 	sessionCopy := mongoSession.Copy()
 	defer sessionCopy.Close()
 	collection := sessionCopy.DB(database).C("books")
-        author:= userrequest.QueryResult.Parameters.Author
 	category:= userrequest.QueryResult.Parameters.Category
+	var mongodatalist []types.MongoDBResponse
+	var authorslist []string
+	err = collection.Find(bson.M{ "genre": category}).Sort("-start").All(&mongodatalist)
+	if err != nil {
+		fmt.Printf("DBquery: %s\n", err)
+	}
+	fmt.Printf("Got book : %+v\n",mongodatalist)
+
+	for _,book:=range mongodatalist{
+                author:=book.Authorname
+		authorslist = append(authorslist,author)
+	}
+	return authorslist
+}
+
+func GetNovelFromMongo( userrequest types.LibraryRequest)types.MongoDBResponse{
+
+	mongoDBDialInfo := &mgo.DialInfo{
+		Addrs:    []string{mongoURL},
+		Timeout:  60 * time.Second,
+		Database: database,
+		Username: username,
+		Password: password,
+	}
+
+	mongoSession, err := mgo.DialWithInfo(mongoDBDialInfo)
+	if err != nil {
+		fmt.Printf("CreateSession: %s\n", err)
+	}
+	mongoSession.SetMode(mgo.Monotonic, true)
+	sessionCopy := mongoSession.Copy()
+	defer sessionCopy.Close()
+	collection := sessionCopy.DB(database).C("books")
+        author:= userrequest.Entities["author"]
+	category:= userrequest.Entities["category"]
 	var book types.MongoDBResponse
 	err = collection.Find(bson.M{"authorname": author, "genre": category}).One(&book)
 	if err != nil {
 		fmt.Printf("DBquery: %s\n", err)
 	}
 	fmt.Printf("Got book : %+v\n",book)
-  return book
+	return book
 }
 
 
