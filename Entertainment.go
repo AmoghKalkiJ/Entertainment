@@ -72,8 +72,8 @@ func NovelsHandler(w http.ResponseWriter, r *http.Request) {
 
 func createtextresponse(title,author,year,url string)string{
 
-       // textresponse:="Title: "+title+"\\n"+"Author: "+author+"\\n"+"Year: "+year+"\\n"+"Link: "+url
-	textresponse:="Title: "+title+"\\"+"\nAuthor: "+author+"\\"+"\nYear: "+year+"\\"+"\nLink: "+url
+        textresponse:="Title: "+title+"\\n"+"Author: "+author+"\\n"+"Year: "+year+"\\n"+"Link: "+url
+	//textresponse:="Title: "+title+"\\"+"\nAuthor: "+author+"\\"+"\nYear: "+year+"\\"+"\nLink: "+url
 
 	return textresponse
 }
