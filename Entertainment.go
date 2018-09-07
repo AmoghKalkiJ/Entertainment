@@ -25,7 +25,7 @@ func main() {
 	r := mux.NewRouter()
 	fmt.Println("Hello")
 	r.HandleFunc("/novels", NovelsHandler).Methods("POST")
-	r.HandleFunc("/movies", MoviessHandler).Methods("POST")
+	r.HandleFunc("/movies", MoviessHandler).Methods("GET")
 	r.HandleFunc("/authorlist", AuthorListHandler).Methods("POST")
 	r.HandleFunc("/score", ScoreHandler).Methods("GET")
 	fmt.Println("Started server on localhost:8080")
@@ -161,16 +161,7 @@ func GetNovelFromMongo(userrequest types.LibraryRequest) types.MongoDBResponse {
 }
 
 func MoviessHandler(w http.ResponseWriter, r *http.Request) {
-	dialogflowreq := types.LibraryRequest{}
-	body, err := ioutil.ReadAll(r.Body)
-	if err != nil {
-		fmt.Println("Got some error in reading request body", err)
-	}
-	fmt.Println("Got body in movies:", string(body))
-	err = json.Unmarshal(body, &dialogflowreq)
-	if err != nil {
-		fmt.Println("Got some error in unmarshalling request body", err)
-	}
+
 	// Call the movies api
 	Url := "https://api.themoviedb.org/3/discover/movie?api_key=d88ce396d9ce2fe1594d82569fb87955&with_genres=18&primary_release_year=2018"
 	movieresponse, err := http.Get(Url)
