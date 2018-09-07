@@ -46,18 +46,18 @@ func NovelsHandler(w http.ResponseWriter, r *http.Request) {
 
 	mongoresponse:=GetNovelFromMongo(r,dialogflowreq)
         fmt.Printf("Got mongo response : %+v\n ",mongoresponse)
-	author := "Agatha Cristie"
-	if dialogflowreq.QueryResult.Parameters.Author != "" {
+	//author := "Agatha Cristie"
+	/*if dialogflowreq.QueryResult.Parameters.Author != "" {
 		author = dialogflowreq.QueryResult.Parameters.Author
-	}
+	}*/
 
-	response := types.DialogFlowResponse{
+	/*response := types.DialogFlowResponse{
 		FulfillmentText:  "Hi you are searching for " + author,
 		Source:      "Entertainment app",
-	}
+	}*/
 
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-	outResponse, _ := json.Marshal(response)
+	outResponse, _ := json.Marshal(mongoresponse)
 	w.WriteHeader(http.StatusOK)
 	w.Write(outResponse)
 
