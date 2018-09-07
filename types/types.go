@@ -71,3 +71,45 @@ type DialogFlowResponse struct {
 						 } `json:"parameters"`
 			    } `json:"followupEventInput"`
 }
+
+
+
+
+
+type Movies struct {
+	Page         int `json:"page"`
+	TotalResults int `json:"total_results"`
+	TotalPages   int `json:"total_pages"`
+	Results      []MovieResult `json:"results"`
+}
+
+
+
+type MovieResult struct{
+	VoteCount        int     `json:"vote_count"`
+	ID               int     `json:"id"`
+	Video            bool    `json:"video"`
+	VoteAverage      float64 `json:"vote_average"`
+	Title            string  `json:"title"`
+	Popularity       float64 `json:"popularity"`
+	PosterPath       string  `json:"poster_path"`
+	OriginalLanguage string  `json:"original_language"`
+	OriginalTitle    string  `json:"original_title"`
+	GenreIds         []int   `json:"genre_ids"`
+	BackdropPath     string  `json:"backdrop_path"`
+	Adult            bool    `json:"adult"`
+	Overview         string  `json:"overview"`
+	ReleaseDate      string  `json:"release_date"`
+}
+
+
+type MongoDBResponse struct {
+	ID         int    `json:"id" bson:"id"`
+	Title      string `json:"title" bson:"title"`
+	Language   string `json:"language" bson:"language"`
+	Publisher  string `json:"publisher" bson:"publisher"`
+	Authorname string `json:"authorname" bson:"authorname"`
+	Genre      string `json:"genre" bson:"genre"`
+	Year       string `json:"year" bson:"year"`
+	URL        string `json:"url" bson:"url"`
+}
