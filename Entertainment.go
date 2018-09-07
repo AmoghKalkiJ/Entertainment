@@ -51,14 +51,14 @@ func NovelsHandler(w http.ResponseWriter, r *http.Request) {
 	/*if dialogflowreq.QueryResult.Parameters.Author != "" {
 		author = dialogflowreq.QueryResult.Parameters.Author
 	}*/
-	textresponse:=createtextresponse(mongoresponse.Title,mongoresponse.Authorname,mongoresponse.Year,mongoresponse.URL)
-	fmt.Println("text response:",textresponse)
-        /*data,err:= json.Marshal(mongoresponse)
+	//textresponse:=createtextresponse(mongoresponse.Title,mongoresponse.Authorname,mongoresponse.Year,mongoresponse.URL)
+	//fmt.Println("text response:",textresponse)
+        data,err:= json.Marshal(mongoresponse)
 	if err != nil {
 		fmt.Println("Got some error in data marshalling body", err)
-	}*/
+	}
 	response := types.DialogFlowResponse{
-		FulfillmentText: textresponse ,
+		FulfillmentText: string(data) ,
 		Source:      "Entertainment app",
 	}
 
