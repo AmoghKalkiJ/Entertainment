@@ -10,6 +10,7 @@ import (
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
 	"time"
+	"strings"
 )
 
 
@@ -50,12 +51,13 @@ func NovelsHandler(w http.ResponseWriter, r *http.Request) {
 	/*if dialogflowreq.QueryResult.Parameters.Author != "" {
 		author = dialogflowreq.QueryResult.Parameters.Author
 	}*/
-        data,err:= json.Marshal(mongoresponse)
+	textresponse:=createtextresponse(mongoresponse.Title,mongoresponse.Authorname,mongoresponse.Year,mongoresponse.URL)
+        /*data,err:= json.Marshal(mongoresponse)
 	if err != nil {
 		fmt.Println("Got some error in data marshalling body", err)
-	}
+	}*/
 	response := types.DialogFlowResponse{
-		FulfillmentText: string(data) ,
+		FulfillmentText: textresponse ,
 		Source:      "Entertainment app",
 	}
 
@@ -64,6 +66,12 @@ func NovelsHandler(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	w.Write(outResponse)
 
+}
+
+
+func createtextresponse(title,author,year,url string)string{
+        textresponse:="Title: "+title+"\\n"+"Author: "+author+"\\n"+"Year: "+year+"\\n"+"Link: "+url
+	return textresponse
 }
 
 func AuthorListHandler(w http.ResponseWriter, r *http.Request){
@@ -140,7 +148,7 @@ func GetNovelFromMongo( userrequest types.LibraryRequest)types.MongoDBResponse{
         author:= userrequest.Entities["author"]
 	category:= userrequest.Entities["category"]
 	var book types.MongoDBResponse
-	err = collection.Find(bson.M{"authorname": author, "genre": category}).One(&book)
+	err = collection.Find(bson.M{"authorname": strings.ToUpper(author), "genre":strings.ToUpper(category)}).One(&book)
 	if err != nil {
 		fmt.Printf("DBquery: %s\n", err)
 	}
