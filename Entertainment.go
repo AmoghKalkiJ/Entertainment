@@ -162,7 +162,7 @@ func GetNovelFromMongo( userrequest types.LibraryRequest)types.MongoDBResponse{
 
 
 func MoviessHandler(w http.ResponseWriter, r *http.Request) {
-	dialogflowreq := types.DialogFlowRequest{}
+	dialogflowreq := types.LibraryRequest{}
 	body, err := ioutil.ReadAll(r.Body)
 	if err != nil {
 		fmt.Println("Got some error in reading request body", err)
@@ -196,8 +196,13 @@ func MoviessHandler(w http.ResponseWriter, r *http.Request) {
 		moviedetails=append(moviedetails,movies.Results[i])
 	}
 
+	moviedata,err:= json.Marshal(moviedetails)
+	if err != nil {
+		fmt.Println("Got some error in data marshalling body", err)
+	}
+
 	response := types.DialogFlowResponse{
-		FulfillmentText: "Hi please find the below list of movies",
+		FulfillmentText: string(moviedata),
 		Source:      "Entertainment app",
 	}
 
